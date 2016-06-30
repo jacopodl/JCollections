@@ -3,3 +3,4 @@ project(LibJCollections)
 
 add_subdirectory(lklist)
 add_subdirectory(stack)
+add_subdirectory(queue)
