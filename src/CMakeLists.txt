@@ -1,4 +1,4 @@
 cmake_minimum_required(VERSION 2.8)
 project(LibJCollections)
 
-add_library(JCollections lklist.c stack.c queue.c utils.c)
+add_library(JCollections lklist.c stack.c queue.c hashtable.c utils.c)
