@@ -27,9 +27,11 @@ struct HashNode {
 
 struct HTable {
     struct HashNode **htable;
+    struct HashNode *iter_ptr;
     jcsize size;
     jcsize bsize;
     jcsize items;
+    jcsize iter_idx;
     unsigned int rhcount;
     float loadFactor;
 
@@ -41,6 +43,8 @@ struct HTable {
 };
 
 bool ht_contains(struct HTable *htable, void *key);
+
+bool ht_iterator(struct HTable *htable, void **key, void **value);
 
 bool ht_remove(struct HTable *htable, void *key);
 
@@ -64,5 +68,7 @@ void *ht_get(struct HTable *htable, void *key);
 
 void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
              bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value));
+
+static void __ht_reset_iterator(struct HTable *htable);
 
 #endif

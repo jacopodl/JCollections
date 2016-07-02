@@ -38,6 +38,8 @@ int main(int argc, char **argv)
     ht_set(&table,mkstr("c8h16"),mkstr("ethylcyclohexane"));
     assert(strcmp(((char *)ht_get(&table,"c8h16")),"ethylcyclohexane")==0);
     assert(strcmp(((char *)ht_get(&table,"ch3")),"methyl")==0);
+    while(ht_iterator(&table,NULL,NULL));
+    ht_iterator(&table,NULL,NULL);
     ht_remove(&table,"ch3");
     assert(ht_get(&table,"ch3")==NULL);
     assert(HT_COUNT((&table))==5);

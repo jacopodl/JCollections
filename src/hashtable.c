@@ -1,6 +1,20 @@
-//
-// Created by jdl on 27/06/16.
-//
+/*
+* hashtable, part of JCollections.
+* Copyright (C) 2014-2016 Jacopo De Luca
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +42,7 @@ bool ht_remove(struct HTable *htable, void *key) {
                 htable->free(cursor->key, cursor->value);
                 free(cursor);
                 htable->items--;
+                __ht_reset_iterator(htable);
                 return true;
             }
         }
@@ -88,6 +103,7 @@ JCErr __ht_insert(struct HTable *htable, void *key, void *value, bool override) 
     cursor->next = htable->htable[index];
     htable->htable[index] = cursor;
     htable->items++;
+    __ht_reset_iterator(htable);
     return JCERR_SUCCESS;
 }
 
@@ -154,6 +170,7 @@ static void __ht_clear_table(struct HTable *htable, int mode) {
         htable->htable[i] = NULL;
     }
     htable->items = 0;
+    __ht_reset_iterator(htable);
     switch (mode) {
         case __HT_INTERNAL_CLEARMODE_CLEAR:
             break;
@@ -191,5 +208,34 @@ void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash
     htable->hash = hash;
     htable->equals_to = equals_to;
     htable->free = free;
+    __ht_reset_iterator(htable);
+}
+
+bool ht_iterator(struct HTable *htable, void **key, void **value)
+{
+    for(;htable->iter_idx<htable->size;htable->iter_idx++)
+    {
+        if(htable->iter_ptr==NULL)
+            htable->iter_ptr = htable->htable[htable->iter_idx];
+        if(htable->iter_ptr!=NULL)
+        {
+            if(key!=NULL)
+                (*key) = htable->iter_ptr->key;
+            if(value!=NULL)
+                (*value) = htable->iter_ptr->value;
+            htable->iter_ptr=htable->iter_ptr->next;
+            if(htable->iter_ptr==NULL)
+                htable->iter_idx++;
+            return true;
+        }
+    }
+    __ht_reset_iterator(htable);
+    return false;
+}
+
+static void __ht_reset_iterator(struct HTable *htable)
+{
+    htable->iter_idx=0;
+    htable->iter_ptr=NULL;
 }
 

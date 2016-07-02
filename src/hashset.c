@@ -1,6 +1,20 @@
-//
-// Created by jdl on 01/07/16.
-//
+/*
+* hashset, part of JCollections.
+* Copyright (C) 2014-2016 Jacopo De Luca
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation; either
+* version 3 of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -8,59 +22,33 @@
 #include "JCdatatype.h"
 #include "hashset.h"
 
-bool hset_contains(struct HSet *hset, void *obj) {
-    if (obj == NULL)
-        return hset->containsNULL;
+inline bool hset_contains(struct HSet *hset, void *obj) {
     return ht_contains(&hset->table, obj);
 }
 
-bool hset_remove(struct HSet *hset, void *obj) {
-    if (obj == NULL) {
-        hset->containsNULL = false;
-        hset->items--;
-        return true;
-    }
-    if (ht_remove(&hset->table, obj)) {
-        hset->items--;
-        return true;
-    }
-    else
-        return false;
+inline bool hset_iterator(struct HSet *hset, void **obj) {
+    return ht_iterator(&hset->table, obj, NULL);
 }
 
-JCErr hset_add(struct HSet *hset, void *obj) {
-    JCErr err;
-    if (obj == NULL) {
-        if (hset->containsNULL)
-            return JCERR_KEYEXIST;
-        else {
-            hset->containsNULL = true;
-            hset->items++;
-            return JCERR_SUCCESS;
-        }
-    }
-    if ((err = ht_put(&hset->table, obj, obj)) == JCERR_SUCCESS)
-        hset->items++;
-    return err;
+inline bool hset_remove(struct HSet *hset, void *obj) {
+    return ht_remove(&hset->table, obj);
+}
+
+inline JCErr hset_add(struct HSet *hset, void *obj) {
+    return ht_put(&hset->table, obj, obj);
 }
 
 void hset_cleanup(struct HSet *hset, bool freemem) {
-    hset->items = 0;
-    hset->containsNULL = false;
     ht_cleanup(&hset->table, false);
     if (freemem)
         free(hset);
 }
 
-void hset_clear(struct HSet *hset) {
-    hset->items = 0;
-    hset->containsNULL = false;
+inline void hset_clear(struct HSet *hset) {
     ht_clear(&hset->table, true);
 }
 
-void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (*equals_to)(void *obj1, void *obj2),
-               void (*free)(void *obj)) {
-    hset->items = 0;
-    hset->containsNULL = false;
+inline void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj),
+                      bool (*equals_to)(void *obj1, void *obj2), void (*free)(void *obj)) {
     ht_init(&hset->table, size, HT_DEFLOADF, hash, equals_to, (void (*)(void *, void *)) free);
 }
