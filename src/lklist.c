@@ -28,9 +28,9 @@ bool lk_contains(struct LkList *list, void *value) {
     return false;
 }
 
-bool lk_remove_at_index(struct LkList *list, unsigned long index) {
+bool lk_remove_at_index(struct LkList *list, jcsize index) {
     struct LkNode *cursor;
-    unsigned long i = 0;
+    jcsize i = 0;
     if (index>=list->count) {
         errno = EINVAL;
         return false;

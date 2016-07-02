@@ -12,4 +12,6 @@ typedef enum {
     JCERR_KEYEXIST
 } JCErr;
 
+typedef unsigned int jcsize;
+
 #endif

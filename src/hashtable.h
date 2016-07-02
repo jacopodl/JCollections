@@ -27,13 +27,13 @@ struct HashNode {
 
 struct HTable {
     struct HashNode **htable;
-    unsigned long size;
-    unsigned long bsize;
-    unsigned long items;
+    jcsize size;
+    jcsize bsize;
+    jcsize items;
     unsigned int rhcount;
     float loadFactor;
 
-    unsigned long (*hash)(void *key);
+    jcsize (*hash)(void *key);
 
     bool (*equals_to)(void *key1, void *key2);
 
@@ -62,7 +62,7 @@ static void __ht_clear_table(struct HTable *htable, int mode);
 
 void *ht_get(struct HTable *htable, void *key);
 
-void ht_init(struct HTable *htable, unsigned long size, float loadFactor, unsigned long (*hash)(void *key),
+void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
              bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value));
 
 #endif

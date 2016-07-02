@@ -32,7 +32,7 @@ struct LkNode {
 struct LkList {
     struct LkNode *list;
     struct LkNode *tail;
-    unsigned long count;
+    jcsize count;
 
     bool(*equals_to)(void *obj1, void *obj2);
 
@@ -41,7 +41,7 @@ struct LkList {
 
 bool lk_contains(struct LkList *list, void *value);
 
-bool lk_remove_at_index(struct LkList *list, unsigned long index);
+bool lk_remove_at_index(struct LkList *list, jcsize index);
 
 bool lk_remove_object(struct LkList *list, void *value);
 

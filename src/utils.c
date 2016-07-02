@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "JCdatatype.h"
 #include "utils.h"
 
 bool eq4int(void *int1, void *int2) {
@@ -17,14 +18,15 @@ bool eq4str(void *str1, void *str2) {
 }
 
 // djb2 by Daniel J. Bernstein
-unsigned long hash4str(unsigned char *str) {
+jcsize hash4str(void *str) {
+    unsigned char *s = (unsigned char *) str;
     unsigned long hash = 5381;
     int c;
 
-    while ((c = *str++)!=0)
+    while ((c = *s++)!=0)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
-    return hash;
+    return (jcsize)hash;
 }
 
 void ht_gfree(void *obj1, void *obj2) {

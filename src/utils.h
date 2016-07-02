@@ -11,7 +11,7 @@ bool eq4int(void *int1, void *int2);
 
 bool eq4str(void *str1, void *str2);
 
-unsigned long hash4str(unsigned char *str);
+jcsize hash4str(void *str);
 
 void ht_gfree(void *obj1, void *obj2);
 

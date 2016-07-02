@@ -13,10 +13,9 @@
 #define HSET_COUNT(hset)    hset->items
 #define HSET_ISEMPTY(hset)  (hset->items==0)
 
-struct HSet
-{
+struct HSet {
     struct HTable table;
-    unsigned long items;
+    jcsize items;
     bool containsNULL;
 };
 
@@ -30,7 +29,7 @@ void hset_cleanup(struct HSet *hset, bool freemem);
 
 void hset_clear(struct HSet *hset);
 
-void hset_init(struct HSet *hset, unsigned long size, unsigned long (*hash)(void *obj),
-               bool (*equals_to)(void *obj1, void *obj2), void (*free)(void *obj));
+void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (*equals_to)(void *obj1, void *obj2),
+               void (*free)(void *obj));
 
 #endif

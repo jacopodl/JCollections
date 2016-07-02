@@ -5,6 +5,9 @@
 #ifndef JCOLLECTIONS_H
 #define JCOLLECTIONS_H
 
+#define JCOLLECTIONS_VERSION_MAJOR  @VERSION_MAJOR@
+#define JCOLLECTIONS_VERSION_MINOR  @VERSION_MINOR@
+
 #include "JCdatatype.h"
 #include "utils.h"
 #include "lklist.h"

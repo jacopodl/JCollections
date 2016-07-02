@@ -15,7 +15,7 @@ bool ht_contains(struct HTable *htable, void *key) {
 bool ht_remove(struct HTable *htable, void *key) {
     struct HashNode *cursor;
     struct HashNode *prev;
-    unsigned long index;
+    jcsize index;
 
     if(htable->htable!=NULL) {
         index = htable->hash(key) % htable->size;
@@ -37,7 +37,7 @@ bool ht_remove(struct HTable *htable, void *key) {
 
 static struct HashNode *__ht_search_node(struct HTable *htable, void *key) {
     struct HashNode *cursor;
-    unsigned long index;
+    jcsize index;
     if (key != NULL && htable->htable != NULL) {
         index = htable->hash(key) % htable->size;
         for (cursor = htable->htable[index]; cursor != NULL; cursor = cursor->next)
@@ -67,7 +67,7 @@ JCErr __ht_insert(struct HTable *htable, void *key, void *value, bool override) 
         if ((err = __ht_rehash(htable)) != JCERR_SUCCESS)
             return err;
     }
-    unsigned long index = htable->hash(key) % htable->size;
+    jcsize index = htable->hash(key) % htable->size;
     struct HashNode *cursor;
     for (cursor = htable->htable[index]; cursor != NULL; cursor = cursor->next) {
         if (htable->equals_to(cursor->key, key)) {
@@ -96,18 +96,18 @@ static JCErr __ht_rehash(struct HTable *htable) {
     struct HashNode *prev;
     struct HashNode *cursor;
     struct HashNode *next;
-    unsigned long newsize;
-    unsigned long oldsize;
-    unsigned long newhash;
+    jcsize newsize;
+    jcsize oldsize;
+    jcsize newhash;
 
     newsize = htable->size + (htable->bsize * htable->rhcount++);
     oldsize = htable->size;
 
     if ((newtable = (struct HashNode **) realloc(htable->htable, newsize * sizeof(struct HashNode *))) == NULL)
         return JCERR_ENOMEM;
-    for (unsigned long i = oldsize; i < newsize; i++)
+    for (jcsize i = oldsize; i < newsize; i++)
         newtable[i] = NULL;
-    for (unsigned long i = 0; i < oldsize; i++) {
+    for (jcsize i = 0; i < oldsize; i++) {
         for (prev = NULL, cursor = newtable[i]; cursor != NULL; cursor = next) {
             newhash = htable->hash(cursor->key) % newsize;
             next = cursor->next;
@@ -145,7 +145,7 @@ static void __ht_clear_table(struct HTable *htable, int mode) {
     if (htable->htable == NULL)
         return;
 
-    for (unsigned long i = 0; i < htable->size; i++) {
+    for (jcsize i = 0; i < htable->size; i++) {
         for (cursor = htable->htable[i]; cursor != NULL; cursor = tmp) {
             tmp = cursor->next;
             htable->free(cursor->key, cursor->value);
@@ -180,7 +180,7 @@ void *ht_get(struct HTable *htable, void *key) {
     return NULL;
 }
 
-void ht_init(struct HTable *htable, unsigned long size, float loadFactor, unsigned long (*hash)(void *key),
+void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
              bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value)) {
     htable->htable = NULL;
     htable->size = size;

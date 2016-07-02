@@ -58,8 +58,8 @@ void hset_clear(struct HSet *hset) {
     ht_clear(&hset->table, true);
 }
 
-void hset_init(struct HSet *hset, unsigned long size, unsigned long (*hash)(void *obj),
-               bool (*equals_to)(void *obj1, void *obj2), void (*free)(void *obj)) {
+void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (*equals_to)(void *obj1, void *obj2),
+               void (*free)(void *obj)) {
     hset->items = 0;
     hset->containsNULL = false;
     ht_init(&hset->table, size, HT_DEFLOADF, hash, equals_to, (void (*)(void *, void *)) free);
