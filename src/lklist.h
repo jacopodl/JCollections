@@ -20,7 +20,7 @@
 #define JCOLLECTIONS_LkList_H
 
 #include <stdbool.h>
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 
 #define LK_COUNT(LkList)    LkList->count
 #define LK_ISEMPTY(LkList)  (LkList->count==0)

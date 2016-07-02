@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "lklist.h"
 
 bool lk_contains(struct LkList *list, void *value) {

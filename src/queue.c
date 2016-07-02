@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "queue.h"
 
 inline JCErr qu_enqueue(struct Queue *qu, void *value)

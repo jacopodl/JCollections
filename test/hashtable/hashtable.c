@@ -1,7 +1,3 @@
-//
-// Created by jdl on 29/06/16.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,7 +35,6 @@ int main(int argc, char **argv)
     assert(strcmp(((char *)ht_get(&table,"c8h16")),"ethylcyclohexane")==0);
     assert(strcmp(((char *)ht_get(&table,"ch3")),"methyl")==0);
     while(ht_iterator(&table,NULL,NULL));
-    ht_iterator(&table,NULL,NULL);
     ht_remove(&table,"ch3");
     assert(ht_get(&table,"ch3")==NULL);
     assert(HT_COUNT((&table))==5);

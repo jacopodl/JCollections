@@ -1,7 +1,3 @@
-//
-// Created by jdl on 27/06/16.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 

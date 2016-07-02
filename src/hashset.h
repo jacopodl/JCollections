@@ -22,7 +22,7 @@
 #include <stdbool.h>
 
 #include "hashtable.h"
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 
 #define HSET_COUNT(hset)    hset->table.items
 #define HSET_ISEMPTY(hset)  (hset->table.items==0)

@@ -19,7 +19,7 @@
 #ifndef JCOLLECTIONS_QUEUE_H
 #define JCOLLECTIONS_QUEUE_H
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "lklist.h"
 
 #define QU_COUNT(qu)    qu->queue.count

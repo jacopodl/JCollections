@@ -19,7 +19,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "hashset.h"
 
 inline bool hset_contains(struct HSet *hset, void *obj) {

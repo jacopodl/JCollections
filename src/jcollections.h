@@ -23,7 +23,7 @@
 #define JCOLLECTIONS_VERSION_MINOR  @VERSION_MINOR@
 #define JCOLLECTIONS_VERSION_PATCH  @VERSION_PATCH@
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "utils.h"
 #include "lklist.h"
 #include "queue.h"

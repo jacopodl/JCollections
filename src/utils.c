@@ -20,7 +20,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "utils.h"
 
 bool eq4int(void *int1, void *int2) {

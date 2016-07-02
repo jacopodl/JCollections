@@ -7,7 +7,7 @@
 
 #include <stdbool.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 
 #define HT_COUNT(ht)    ht->items
 #define HT_SIZE(ht)     ht->size

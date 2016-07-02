@@ -19,7 +19,7 @@
 #ifndef JCOLLECTIONS_STACK_H
 #define JCOLLECTIONS_STACK_H
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "lklist.h"
 
 #define SK_COUNT(sk)    sk->stack.count

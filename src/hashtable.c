@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "hashtable.h"
 
 bool ht_contains(struct HTable *htable, void *key) {

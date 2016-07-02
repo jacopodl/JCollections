@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 
-#include "JCdatatype.h"
+#include "jcdatatype.h"
 #include "stack.h"
 
 inline JCErr sk_push(struct Stack *sk, void *value)
