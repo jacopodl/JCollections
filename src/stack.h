@@ -5,6 +5,7 @@
 #ifndef JCOLLECTIONS_STACK_H
 #define JCOLLECTIONS_STACK_H
 
+#include "JCdatatype.h"
 #include "lklist.h"
 
 #define SK_COUNT(sk)    sk->stack.count
@@ -14,7 +15,7 @@ struct Stack {
     struct LkList stack;
 };
 
-bool sk_push(struct Stack *sk, void *value);
+JCErr sk_push(struct Stack *sk, void *value);
 
 void sk_cleanup(struct Stack *sk, bool freemem);
 

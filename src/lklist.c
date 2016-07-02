@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "JCdatatype.h"
 #include "lklist.h"
 
 bool lk_contains(struct LkList *list, void *value) {
@@ -25,43 +26,6 @@ bool lk_contains(struct LkList *list, void *value) {
         if (list->equals_to(value, cursor->value))
             return true;
     return false;
-}
-
-bool lk_push(struct LkList *list, void *value) {
-    struct LkNode *node;
-    if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
-        return false;
-    node->next = list->list;
-    node->prev=NULL;
-    node->value = value;
-    if(node->next!=NULL)
-        node->next->prev=node;
-    if (list->tail == NULL)
-        list->tail = node;
-    list->list = node;
-    list->count++;
-    return true;
-}
-
-bool lk_push_last(struct LkList *list, void *value) {
-    struct LkNode *node;
-    if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
-        return false;
-    node->value = value;
-    if (list->tail == NULL) {
-        node->next = list->list;
-        node->prev = NULL;
-        list->list = node;
-    }
-    else {
-        node->next = NULL;
-        node->prev = list->tail;
-    }
-    if(node->prev!=NULL)
-        node->prev->next=node;
-    list->tail = node;
-    list->count++;
-    return true;
 }
 
 bool lk_remove_at_index(struct LkList *list, unsigned long index) {
@@ -95,6 +59,43 @@ bool lk_remove_object(struct LkList *list, void *value) {
     return false;
 }
 
+JCErr lk_push(struct LkList *list, void *value) {
+    struct LkNode *node;
+    if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
+        return JCERR_ENOMEM;
+    node->next = list->list;
+    node->prev=NULL;
+    node->value = value;
+    if(node->next!=NULL)
+        node->next->prev=node;
+    if (list->tail == NULL)
+        list->tail = node;
+    list->list = node;
+    list->count++;
+    return JCERR_SUCCESS;
+}
+
+JCErr lk_push_last(struct LkList *list, void *value) {
+    struct LkNode *node;
+    if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
+        return JCERR_ENOMEM;
+    node->value = value;
+    if (list->tail == NULL) {
+        node->next = list->list;
+        node->prev = NULL;
+        list->list = node;
+    }
+    else {
+        node->next = NULL;
+        node->prev = list->tail;
+    }
+    if(node->prev!=NULL)
+        node->prev->next=node;
+    list->tail = node;
+    list->count++;
+    return JCERR_SUCCESS;
+}
+
 void lk_cleanup(struct LkList *list, bool freemem) {
     lk_clear(list);
     if(freemem)
@@ -104,7 +105,7 @@ void lk_cleanup(struct LkList *list, bool freemem) {
 void lk_clear(struct LkList *list) {
     struct LkNode *cursor;
     struct LkNode *tmp;
-    for (tmp = NULL, cursor = list->list; cursor != NULL; tmp = cursor->next, free(cursor), cursor = tmp)
+    for (cursor = list->list; cursor != NULL; tmp = cursor->next, free(cursor), cursor = tmp)
         list->free(cursor->value);
     list->list = NULL;
     list->tail = NULL;

@@ -4,9 +4,10 @@
 
 #include <stdlib.h>
 
+#include "JCdatatype.h"
 #include "queue.h"
 
-inline bool qu_enqueue(struct Queue *qu, void *value)
+inline JCErr qu_enqueue(struct Queue *qu, void *value)
 {
     return lk_push(&qu->queue,value);
 }

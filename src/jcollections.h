@@ -5,10 +5,12 @@
 #ifndef JCOLLECTIONS_H
 #define JCOLLECTIONS_H
 
-#include <utils.h>
-#include <lklist.h>
-#include <queue.h>
-#include <stack.h>
-#include <hashtable.h>
+#include "JCdatatype.h"
+#include "utils.h"
+#include "lklist.h"
+#include "queue.h"
+#include "stack.h"
+#include "hashtable.h"
+#include "hashset.h"
 
 #endif

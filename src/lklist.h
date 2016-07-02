@@ -18,6 +18,7 @@
 #define JCOLLECTIONS_LkList_H
 
 #include <stdbool.h>
+#include "JCdatatype.h"
 
 #define LK_COUNT(LkList)    LkList->count
 #define LK_ISEMPTY(LkList)  (LkList->count==0)
@@ -40,13 +41,13 @@ struct LkList {
 
 bool lk_contains(struct LkList *list, void *value);
 
-bool lk_push(struct LkList *list, void *value);
-
-bool lk_push_last(struct LkList *list, void *value);
-
 bool lk_remove_at_index(struct LkList *list, unsigned long index);
 
 bool lk_remove_object(struct LkList *list, void *value);
+
+JCErr lk_push(struct LkList *list, void *value);
+
+JCErr lk_push_last(struct LkList *list, void *value);
 
 void lk_cleanup(struct LkList *list, bool freemem);
 

@@ -4,9 +4,10 @@
 
 #include <stdlib.h>
 
+#include "JCdatatype.h"
 #include "stack.h"
 
-inline bool sk_push(struct Stack *sk, void *value)
+inline JCErr sk_push(struct Stack *sk, void *value)
 {
     return lk_push(&sk->stack, value);
 }

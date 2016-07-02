@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(LibJCollections)
+include(CTest)
 
 set (VERSION_MAJOR 1)
 set (VERSION_MINOR 0)

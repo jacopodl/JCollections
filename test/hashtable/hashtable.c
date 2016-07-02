@@ -21,11 +21,11 @@ int main(int argc, char **argv)
 {
     struct HTable table;
     printf("ht_init\t[OK]\n");
-    ht_init(&table, 5, HT_DEFLOADF, (htsize (*)(void *)) hash4str, eq4str, ht_gfree);
+    ht_init(&table, 5, HT_DEFLOADF, (unsigned long (*)(void *)) hash4str, eq4str, ht_gfree);
     assert(HT_ISEMPTY((&table))==true);
     assert(HT_SIZE((&table))==5);
     ht_put(&table,mkstr("h20"),mkstr("water"));
-    assert(ht_put(&table,mkstr("h20"),mkstr("err"))==HTOP_KEYEXIST);
+    assert(ht_put(&table,mkstr("h20"),mkstr("err"))==JCERR_KEYEXIST);
     ht_put(&table,mkstr("ch4"),mkstr("methane"));
     ht_put(&table,mkstr("ch3"),mkstr("methyl"));
     assert(ht_contains(&table,"ch4")==true);

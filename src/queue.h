@@ -5,6 +5,7 @@
 #ifndef JCOLLECTIONS_QUEUE_H
 #define JCOLLECTIONS_QUEUE_H
 
+#include "JCdatatype.h"
 #include "lklist.h"
 
 #define QU_COUNT(qu)    qu->queue.count
@@ -14,7 +15,7 @@ struct Queue {
     struct LkList queue;
 };
 
-bool qu_enqueue(struct Queue *qu, void *value);
+JCErr qu_enqueue(struct Queue *qu, void *value);
 
 void qu_cleanup(struct Queue *qu, bool freemem);
 
