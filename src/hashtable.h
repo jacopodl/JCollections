@@ -37,7 +37,7 @@ struct HTable {
 
     jcsize (*hash)(void *key);
 
-    bool (*equals_to)(void *key1, void *key2);
+    int (*compare_to)(void *key1, void *key2);
 
     void (*free)(void *key, void *value);
 };
@@ -67,7 +67,7 @@ static void __ht_clear_table(struct HTable *htable, int mode);
 void *ht_get(struct HTable *htable, void *key);
 
 void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
-             bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value));
+             int (*compare_to)(void *key1, void *key2), void (*free)(void *key, void *value));
 
 static void __ht_reset_iterator(struct HTable *htable);
 

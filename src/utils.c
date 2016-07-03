@@ -23,14 +23,6 @@
 #include "jcdatatype.h"
 #include "utils.h"
 
-bool eq4int(void *int1, void *int2) {
-    return *((int *) int1) == *((int *) int2);
-}
-
-bool eq4str(void *str1, void *str2) {
-    return strcmp((char *) str1, (char *) str2) == 0;
-}
-
 // djb2 by Daniel J. Bernstein
 jcsize hash4str(void *str) {
     unsigned char *s = (unsigned char *) str;
@@ -41,6 +33,14 @@ jcsize hash4str(void *str) {
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
     return (jcsize)hash;
+}
+
+int cmp4int(void *int1, void *int2) {
+    return *((int *) int1) - *((int *) int2);
+}
+
+int cmp4str(void *str1, void *str2) {
+    return strcmp((char *) str1, (char *) str2);
 }
 
 void ht_gfree(void *obj1, void *obj2) {

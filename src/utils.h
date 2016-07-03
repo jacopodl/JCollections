@@ -21,11 +21,11 @@
 
 #include <stdbool.h>
 
-bool eq4int(void *int1, void *int2);
-
-bool eq4str(void *str1, void *str2);
-
 jcsize hash4str(void *str);
+
+int cmp4int(void *int1, void *int2);
+
+int cmp4str(void *str1, void *str2);
 
 void ht_gfree(void *obj1, void *obj2);
 

@@ -43,7 +43,7 @@ void hset_cleanup(struct HSet *hset, bool freemem);
 
 void hset_clear(struct HSet *hset);
 
-void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (*equals_to)(void *obj1, void *obj2),
+void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), int (*compare_to)(void *obj1, void *obj2),
                void (*free)(void *obj));
 
 #endif

@@ -95,7 +95,7 @@ void removeTest(struct LkList *list)
 int main(int argc, char **argv)
 {
     struct LkList list;
-    lk_init(&list,eq4int,free);
+    lk_init(&list,cmp4int,free);
     printf("lk_init\t[OK]\n");
     printf("insertTest(Static values)\n");
     insertTest(&list);

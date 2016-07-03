@@ -49,6 +49,6 @@ inline void hset_clear(struct HSet *hset) {
 }
 
 inline void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj),
-                      bool (*equals_to)(void *obj1, void *obj2), void (*free)(void *obj)) {
-    ht_init(&hset->table, size, HT_DEFLOADF, hash, equals_to, (void (*)(void *, void *)) free);
+                      int (*compare_to)(void *obj1, void *obj2), void (*free)(void *obj)) {
+    ht_init(&hset->table, size, HT_DEFLOADF, hash, compare_to, (void (*)(void *, void *)) free);
 }

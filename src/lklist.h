@@ -36,7 +36,7 @@ struct LkList {
     struct LkNode *tail;
     jcsize count;
 
-    bool(*equals_to)(void *obj1, void *obj2);
+    int(*compare_to)(void *obj1, void *obj2);
 
     void(*free)(void *obj);
 };
@@ -55,7 +55,7 @@ void lk_cleanup(struct LkList *list, bool freemem);
 
 void lk_clear(struct LkList *list);
 
-void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj));
+void lk_init(struct LkList *list, int(*compare_to)(void *obj1, void *obj2), void(*free)(void *obj));
 
 void *lk_peek(struct LkList *list);
 

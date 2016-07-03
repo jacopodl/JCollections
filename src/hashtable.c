@@ -34,7 +34,7 @@ bool ht_remove(struct HTable *htable, void *key) {
     if(htable->htable!=NULL) {
         index = htable->hash(key) % htable->size;
         for (prev = NULL, cursor = htable->htable[index]; cursor != NULL; prev = cursor, cursor = prev->next) {
-            if (htable->equals_to(cursor->key, key)) {
+            if (htable->compare_to(cursor->key, key)==0) {
                 if (prev == NULL)
                     htable->htable[index] = cursor->next;
                 else
@@ -56,7 +56,7 @@ static struct HashNode *__ht_search_node(struct HTable *htable, void *key) {
     if (key != NULL && htable->htable != NULL) {
         index = htable->hash(key) % htable->size;
         for (cursor = htable->htable[index]; cursor != NULL; cursor = cursor->next)
-            if (htable->equals_to(cursor->key, key))
+            if (htable->compare_to(cursor->key, key)==0)
                 return cursor;
     }
     return NULL;
@@ -85,7 +85,7 @@ JCErr __ht_insert(struct HTable *htable, void *key, void *value, bool override) 
     jcsize index = htable->hash(key) % htable->size;
     struct HashNode *cursor;
     for (cursor = htable->htable[index]; cursor != NULL; cursor = cursor->next) {
-        if (htable->equals_to(cursor->key, key)) {
+        if (htable->compare_to(cursor->key, key)==0) {
             if (override) {
                 htable->free(cursor->key, cursor->value);
                 cursor->key = key;
@@ -198,7 +198,7 @@ void *ht_get(struct HTable *htable, void *key) {
 }
 
 void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
-             bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value)) {
+             int (*compare_to)(void *key1, void *key2), void (*free)(void *key, void *value)) {
     htable->htable = NULL;
     htable->size = size;
     htable->bsize = size;
@@ -206,7 +206,7 @@ void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash
     htable->rhcount = 1;
     htable->loadFactor = loadFactor;
     htable->hash = hash;
-    htable->equals_to = equals_to;
+    htable->compare_to = compare_to;
     htable->free = free;
     __ht_reset_iterator(htable);
 }
