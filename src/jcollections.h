@@ -16,6 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file jcollections.h
+ * @brief This IS THE JCOLLECTIONS LIBRARY!
+ */
+
 #ifndef JCOLLECTIONS_H
 #define JCOLLECTIONS_H
 
