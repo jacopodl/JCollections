@@ -32,14 +32,14 @@
  * @param list Pointer to linked-list.
  * @return The number of elements in this linked-list.
  */
-#define LK_COUNT(LkList)    LkList->count
+#define LK_COUNT(list)    list->count
 
 /**
  * @brief Returns true if this linked-list contains no elements.
  * @param list Pointer to linked-list.
  * @return true if this linked-list contains no elements.
  */
-#define LK_ISEMPTY(LkList)  (LkList->count==0)
+#define LK_ISEMPTY(list)  (list->count==0)
 
 struct LkNode {
     void *value;

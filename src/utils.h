@@ -41,6 +41,12 @@ jcsize hash4str(void *str);
  */
 int cmp4int(void *int1, void *int2);
 
+/**
+ * @brief Compare two strings.
+ * @param str1 String 1.
+ * @param str2 String 2.
+ * @return See strcmp.
+ */
 int cmp4str(void *str1, void *str2);
 
 /**
@@ -48,6 +54,6 @@ int cmp4str(void *str1, void *str2);
  * @param obj1 Object 1.
  * @param obj2 Object 2.
  */
-void ht_gfree(void *obj1, void *obj2);
+void g2free(void *obj1, void *obj2);
 
 #endif

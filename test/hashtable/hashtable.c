@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 {
     struct HTable table;
     printf("ht_init\t[OK]\n");
-    ht_init(&table, 5, HT_DEFLOADF, hash4str, cmp4str, ht_gfree);
+    ht_init(&table, 5, HT_DEFLOADF, hash4str, cmp4str, g2free);
     assert(HT_ISEMPTY((&table))==true);
     assert(HT_SIZE((&table))==5);
     ht_put(&table,mkstr("h20"),mkstr("water"));

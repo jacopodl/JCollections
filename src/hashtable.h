@@ -102,7 +102,9 @@ bool ht_contains(struct HTable *htable, void *key);
 /**
  * @brief Returns an iterator over the elements in this hashtable.
  * @param htable Pointer to hashtable.
- * @return Returns the next element in the hashtable if present, otherwise NULL is returned.
+ * @param __OUT__key Key Value associated to value.
+ * @param __OUT__value Value associated to key.
+ * @return Returns true if the iteration has more elements.
  * @warning The following operations resets the iterator: add, remove, clear.
  */
 bool ht_iterator(struct HTable *htable, void **key, void **value);

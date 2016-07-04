@@ -26,10 +26,6 @@ inline bool hset_contains(struct HSet *hset, void *obj) {
     return ht_contains(&hset->table, obj);
 }
 
-inline bool hset_iterator(struct HSet *hset, void **obj) {
-    return ht_iterator(&hset->table, obj, NULL);
-}
-
 inline bool hset_remove(struct HSet *hset, void *obj) {
     return ht_remove(&hset->table, obj);
 }
@@ -51,4 +47,11 @@ inline void hset_clear(struct HSet *hset) {
 inline void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj),
                       int (*compare_to)(void *obj1, void *obj2), void (*free)(void *obj)) {
     ht_init(&hset->table, size, HT_DEFLOADF, hash, compare_to, (void (*)(void *, void *)) free);
+}
+
+inline void *hset_iterator(struct HSet *hset) {
+    void *obj;
+    if(ht_iterator(&hset->table, &obj, NULL))
+        return obj;
+    return NULL;
 }

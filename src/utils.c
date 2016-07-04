@@ -43,7 +43,7 @@ int cmp4str(void *str1, void *str2) {
     return strcmp((char *) str1, (char *) str2);
 }
 
-void ht_gfree(void *obj1, void *obj2) {
+void g2free(void *obj1, void *obj2) {
     free(obj1);
     free(obj2);
 }

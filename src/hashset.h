@@ -67,14 +67,6 @@ struct HSet {
 bool hset_contains(struct HSet *hset, void *obj);
 
 /**
- * @brief Returns an iterator over the elements in this set.
- * @param hset Pointer to hashset.
- * @return Returns the next element in the hashset if present, otherwise NULL is returned.
- * @warning The following operations resets the iterator: add, remove, clear.
- */
-bool hset_iterator(struct HSet *hset, void **obj);
-
-/**
  * @brief Remove an element from hashset.
  * @param hset Pointer to hashset.
  * @param value The value to be removed from hashset.
@@ -114,5 +106,12 @@ void hset_clear(struct HSet *hset);
  */
 void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), int (*compare_to)(void *obj1, void *obj2),
                void (*free)(void *obj));
+/**
+ * @brief Returns an iterator over the elements in this set.
+ * @param hset Pointer to hashset.
+ * @return Returns the next element in the hashset if present, otherwise NULL is returned.
+ * @warning The following operations resets the iterator: add, remove, clear.
+ */
+void *hset_iterator(struct HSet *hset);
 
 #endif
