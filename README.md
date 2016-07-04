@@ -1,6 +1,7 @@
 ![Language C](https://img.shields.io/badge/Language-C-orange.svg)
 ![LGPLv3 License](https://img.shields.io/badge/license-LGPL3-blue.svg)
 ![](https://img.shields.io/badge/version-1.0.0-green.svg)
+![](https://travis-ci.org/jacopodl/JCollections.svg?branch=master)
 
 JCollections
 ============
