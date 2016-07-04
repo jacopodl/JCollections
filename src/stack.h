@@ -28,14 +28,16 @@
 #include "lklist.h"
 
 /**
- * @brief Obtains number of elements in the stack.
- * @return Obtains number of elements in the stack.
+ * @brief Obtains number of elements in this stack.
+ * @param sk Pointer to stack.
+ * @return The number of elements in this stack.
  */
 #define SK_COUNT(sk)    sk->stack.count
 
 /**
- * @brief Check whether the stack is empty.
- * @return true if the stack is empty, otherwise returns false.
+ * @brief Returns true if this stack contains no elements.
+ * @param sk Pointer to stack.
+ * @return true if this stack contains no elements.
  */
 #define SK_ISEMPTY(sk)  (sk->stack.count==0)
 
@@ -57,9 +59,9 @@ struct Stack {
 };
 
 /**
- * @brief Inserts an element into the stack.
+ * @brief Inserts the specified element into the stack.
  * @param sk Pointer to stack.
- * @param value The value to be inserted into the stack.
+ * @param value The element to add.
  * @return If the item was inserted JCERR_SUCCESS is returned.
  * @warning In case of out of memory JCERR_ENOMEM is returned.
  */
@@ -73,7 +75,7 @@ JCErr sk_push(struct Stack *sk, void *value);
 void sk_cleanup(struct Stack *sk, bool freemem);
 
 /**
- * @brief Remove all elements from the stack.
+ * @brief Removes all of the elements from this stack.
  * @param sk Pointer to stack.
  */
 void sk_clear(struct Stack *sk);
@@ -86,14 +88,16 @@ void sk_clear(struct Stack *sk);
 void sk_init(struct Stack *sk, void(*free)(void *obj));
 
 /**
- * @brief Gets an item without removing it from the stack.
+ * @brief Looks at the object at the top of this stack without removing it from the stack.
  * @param sk Pointer to stack.
+ * @return The object at the top of this stack or NULL if the stack is empty.
  */
 void *sk_peek(struct Stack *sk);
 
 /**
- * @brief Gets an item from the stack.
+ * @brief Removes the object at the top of this stack and returns that object as the value of this function.
  * @param sk Pointer to stack.
+ * @return The object at the top of this stack or NULL if the stack is empty.
  */
 void *sk_pop(struct Stack *sk);
 

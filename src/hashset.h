@@ -59,10 +59,10 @@ struct HSet {
 };
 
 /**
- * @brief Check if the value is contained in the hashset.
+ * @brief Returns true if this hashset contains the specified element.
  * @param hset Pointer to hashset.
- * @param value The value to be removed from hashset.
- * @return If the value is contained in the hashset returns true, otherwise returns false.
+ * @param value Element whose presence in this hashset is to be tested.
+ * @return true if this hashset contains the specified element, false otherwise.
  */
 bool hset_contains(struct HSet *hset, void *obj);
 
@@ -99,7 +99,7 @@ JCErr hset_add(struct HSet *hset, void *obj);
 void hset_cleanup(struct HSet *hset, bool freemem);
 
 /**
- * @brief Remove all elements from the hashset.
+ * @brief Removes all of the elements from this hashset.
  * @param hset Pointer to hashset.
  */
 void hset_clear(struct HSet *hset);

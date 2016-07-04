@@ -28,14 +28,16 @@
 #include "lklist.h"
 
 /**
- * @brief Obtains number of elements in the queue.
- * @return Obtains number of elements in the queue.
+ * @brief Obtains number of elements in this queue.
+ * @param qu Pointer to queue.
+ * @return The number of elements in this queue.
  */
 #define QU_COUNT(qu)    qu->queue.count
 
 /**
- * @brief Check whether the queue is empty.
- * @return true if the queue is empty, otherwise returns false.
+ * @brief Returns true if this queue contains no elements.
+ * @param qu Pointer to queue.
+ * @return true if this linked-list contains no elements.
  */
 #define QU_ISEMPTY(qu)  (qu->queue.count==0)
 
@@ -57,9 +59,9 @@ struct Queue {
 };
 
 /**
- * @brief Inserts an element into the queue.
+ * @brief Inserts the specified element into the queue.
  * @param qu Pointer to queue.
- * @param value The value to be inserted into the queue.
+ * @param value The element to add.
  * @return If the item was inserted JCERR_SUCCESS is returned.
  * @warning In case of out of memory JCERR_ENOMEM is returned.
  */
@@ -73,13 +75,13 @@ JCErr qu_enqueue(struct Queue *qu, void *value);
 void qu_cleanup(struct Queue *qu, bool freemem);
 
 /**
- * @brief Remove all elements from the queue.
+ * @brief Removes all of the elements from this queue.
  * @param qu Pointer to queue.
  */
 void qu_clear(struct Queue *qu);
 
 /**
- * @brief Gets an item from the queue.
+ * @brief Removes and returns the first element of this queue.
  * @param qu Pointer to queue.
  */
 void *qu_dequeue(struct Queue *qu);
@@ -92,7 +94,7 @@ void *qu_dequeue(struct Queue *qu);
 void qu_init(struct Queue *qu, void(*free)(void *obj));
 
 /**
- * @brief Gets an item without removing it from the queue.
+ * @brief Retrieves, but does not remove, the first element of this queue.
  * @param qu Pointer to queue.
  */
 void *qu_peek(struct Queue *qu);
