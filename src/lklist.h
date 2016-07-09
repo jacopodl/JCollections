@@ -27,6 +27,8 @@
 #include <stdbool.h>
 #include "jcdatatype.h"
 
+#define STATIC_LKLIST_INITIALIZER(equals_to, free)   {NULL,NULL,0,equals_to,free}
+
 /**
  * @brief Obtains number of elements in this linked-list.
  * @param list Pointer to linked-list.
@@ -54,7 +56,7 @@ struct LkNode {
  * @code
  * char *str;
  * struct LkList lkl;
- * lk_init(&lkl, compare_to, free);
+ * lk_init(&lkl, equals_to, free);
  * lk_push(&lkl, value);
  * lk_push(&lkl, value2);
  * str = (char *) lk_pop(&lkl);
@@ -66,7 +68,7 @@ struct LkList {
     struct LkNode *tail;
     jcsize count;
 
-    int(*compare_to)(void *obj1, void *obj2);
+    bool(*equals_to)(void *obj1, void *obj2);
 
     void(*free)(void *obj);
 };
@@ -129,10 +131,10 @@ void lk_clear(struct LkList *list);
 /**
  * @brief Initialize a new linked-list.
  * @param list Pointer to linked-list.
- * @param compare_to Pointer to the function called for compare two objects.
+ * @param equals_to Pointer to the function called for compare two objects.
  * @param free Pointer to the function called to free memory.
  */
-void lk_init(struct LkList *list, int(*compare_to)(void *obj1, void *obj2), void(*free)(void *obj));
+void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj));
 
 /**
  * @brief Retrieves, but does not remove, the first element of this linked-list.

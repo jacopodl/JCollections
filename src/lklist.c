@@ -25,7 +25,7 @@
 bool lk_contains(struct LkList *list, void *value) {
     struct LkNode *cursor;
     for (cursor = list->list; cursor != NULL; cursor = cursor->next)
-        if (list->compare_to(value, cursor->value)==0)
+        if (list->equals_to(value, cursor->value))
             return true;
     return false;
 }
@@ -53,7 +53,7 @@ bool lk_remove_at_index(struct LkList *list, jcsize index) {
 bool lk_remove_object(struct LkList *list, void *value) {
     struct LkNode *cursor;
     for (cursor = list->list; cursor != NULL; cursor = cursor->next)
-        if (list->compare_to(value, cursor->value)==0) {
+        if (list->equals_to(value, cursor->value)) {
             list->free(cursor->value);
             lk_rmnode(list, cursor);
             return true;
@@ -114,11 +114,11 @@ void lk_clear(struct LkList *list) {
     list->count = 0;
 }
 
-void lk_init(struct LkList *list, int(*compare_to)(void *obj1, void *obj2), void(*free)(void *obj)) {
+void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj)) {
     list->list = NULL;
     list->tail = NULL;
     list->count = 0;
-    list->compare_to = compare_to;
+    list->equals_to = equals_to;
     list->free = free;
 }
 

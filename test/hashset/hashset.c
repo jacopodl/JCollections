@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 {
     struct HSet set;
     printf("hset_init\t[OK]\n");
-    hset_init(&set, 5, hash4str, cmp4str, free);
+    hset_init(&set, 5, hash4str, eq4str, free);
     assert(HSET_ISEMPTY((&set))==true);
     assert(hset_add(&set,mkstr("carboxylic acid"))==JCERR_SUCCESS);
     assert(HSET_ISEMPTY((&set))==false);

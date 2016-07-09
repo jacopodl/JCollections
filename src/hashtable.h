@@ -28,6 +28,13 @@
 
 #include "jcdatatype.h"
 
+#define HT_DEFLOADF 0.75
+#define STATIC_HASHTABLE_INITIALIZER(size, hash, equals_to, free)    {NULL,NULL,size,size,0,0,1,HT_DEFLOADF,hash,equals_to,free}
+
+#define __HT_INTERNAL_CLEARMODE_CLEAR     0x00
+#define __HT_INTERNAL_CLEARMODE_RESET     0x01
+#define __HT_INTERNAL_CLEARMODE_DESTROY   0x02
+
 /**
  * @brief Obtains number of elements in this hashtable.
  * @param ht Pointer to hashtable.
@@ -49,12 +56,6 @@
  */
 #define HT_ISEMPTY(ht)  (ht->items==0)
 
-#define HT_DEFLOADF 0.75
-
-#define __HT_INTERNAL_CLEARMODE_CLEAR     0x00
-#define __HT_INTERNAL_CLEARMODE_RESET     0x01
-#define __HT_INTERNAL_CLEARMODE_DESTROY   0x02
-
 struct HashNode {
     void *value;
     void *key;
@@ -68,7 +69,7 @@ struct HashNode {
  * @code
  * char *str;
  * struct HTable ht;
- * ht_init(&ht,HT_DEFLOADF,5,hash,compare_to,free);
+ * ht_init(&ht,HT_DEFLOADF,5,hash,equals_to,free);
  * ht_put(&ht,key,value);
  * str = (char *) ht_get(&ht,key);
  * ht_cleanup(&ht,false);
@@ -86,7 +87,7 @@ struct HTable {
 
     jcsize (*hash)(void *key);
 
-    int (*compare_to)(void *key1, void *key2);
+    bool (*equals_to)(void *key1, void *key2);
 
     void (*free)(void *key, void *value);
 };
@@ -169,11 +170,11 @@ void *ht_get(struct HTable *htable, void *key);
  * @param size Starting size.
  * @param loadFactor Load factor for hashtable.
  * @param hash Pointer to the function called to hash an object.
- * @param compare_to Pointer to the function called for compare two objects.
+ * @param equals_to Pointer to the function called for compare two objects.
  * @param free Pointer to the function called to free memory.
  */
 void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
-             int (*compare_to)(void *key1, void *key2), void (*free)(void *key, void *value));
+             bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value));
 
 static void __ht_reset_iterator(struct HTable *htable);
 

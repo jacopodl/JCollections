@@ -29,6 +29,8 @@
 #include "jcdatatype.h"
 #include "hashtable.h"
 
+#define STATIC_HASHSET_INITIALIZER
+
 /**
  * @brief Obtains number of elements in the hashset.
  * @return Obtains number of elements in the hashset.
@@ -47,7 +49,7 @@
  * It can be used in this way:
  * @code
  * struct HSet hset;
- * hset_init(&hset, 5, hash, compare_to, free);
+ * hset_init(&hset, 5, hash, equals_to, free);
  * hset_add(&hset, value);
  * hset_add(&hset, value2);
  * hset_contains(&hset, value);
@@ -101,10 +103,10 @@ void hset_clear(struct HSet *hset);
  * @param hset Pointer to hashset.
  * @param size Starting size.
  * @param hash Pointer to the function called to hash an object.
- * @param compare_to Pointer to the function called for compare two objects.
+ * @param equals_to Pointer to the function called for compare two objects.
  * @param free Pointer to the function called to free memory.
  */
-void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), int (*compare_to)(void *obj1, void *obj2),
+void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (*equals_to)(void *obj1, void *obj2),
                void (*free)(void *obj));
 /**
  * @brief Returns an iterator over the elements in this set.

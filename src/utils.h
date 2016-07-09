@@ -27,27 +27,27 @@
 #include <stdbool.h>
 
 /**
- * @brief Compute the hash for an arbitrary string.
- * @param str String.
- * @return The hash value.
- */
-jcsize hash4str(void *str);
-
-/**
  * @brief Compare two integer values.
  * @param int1 Integer 1.
  * @param int2 Integer 2.
- * @return The value 0 if the argument is equal; a value less than 0 if int1 is less than int2; and a value greater than 0 if int1 is greater than int2.
+ * @return True if the argument is equal, otherwise false.
  */
-int cmp4int(void *int1, void *int2);
+bool eq4int(void *int1, void *int2);
 
 /**
  * @brief Compare two strings.
  * @param str1 String 1.
  * @param str2 String 2.
- * @return See strcmp.
+ * @return True if strings are equals, otherwise false.
  */
-int cmp4str(void *str1, void *str2);
+bool eq4str(void *str1, void *str2);
+
+/**
+ * @brief Compute the hash for an arbitrary string.
+ * @param str String.
+ * @return The hash value.
+ */
+jcsize hash4str(void *str);
 
 /**
  * @brief Frees memory on the two generic objects, for example: char*, int*, ...
