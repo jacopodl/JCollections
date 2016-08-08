@@ -27,6 +27,8 @@
 #include "jcdatatype.h"
 #include "lklist.h"
 
+#define STATIC_QUEUE_INITIALIZER(free) {STATIC_LKLIST_INITIALIZER(NULL,free)}
+
 /**
  * @brief Obtains number of elements in this queue.
  * @param qu Pointer to queue.
