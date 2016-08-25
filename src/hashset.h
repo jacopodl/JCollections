@@ -116,4 +116,10 @@ void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (
  */
 void *hset_iterator(struct HSet *hset);
 
+/**
+ * @brief Reset current iterator.
+ * @param hset Pointer to hashset.
+ */
+void hset_reset_iterator(struct HSet *hset);
+
 #endif

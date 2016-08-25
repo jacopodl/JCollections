@@ -27,7 +27,7 @@
 #include <stdbool.h>
 #include "jcdatatype.h"
 
-#define STATIC_LKLIST_INITIALIZER(equals_to, free)   {NULL,NULL,0,equals_to,free}
+#define STATIC_LKLIST_INITIALIZER(equals_to, free)   {NULL,NULL,NULL,0,equals_to,free}
 
 /**
  * @brief Obtains number of elements in this linked-list.
@@ -66,11 +66,12 @@ struct LkNode {
 struct LkList {
     struct LkNode *list;
     struct LkNode *tail;
+    struct LkNode *iter_ptr;
     jcsize count;
 
-    bool(*equals_to)(void *obj1, void *obj2);
+    bool (*equals_to)(void *obj1, void *obj2);
 
-    void(*free)(void *obj);
+    void (*free)(void *obj);
 };
 
 /**
@@ -137,6 +138,14 @@ void lk_clear(struct LkList *list);
 void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj));
 
 /**
+ * @brief Returns an iterator over the elements in this linked list.
+ * @param list Pointer to linked list.
+ * @return Returns the next element in the linkedl ist if present, otherwise NULL is returned.
+ * @warning The following operations resets the iterator: push, pop, clear.
+ */
+void *lk_iterator(struct LkList *list);
+
+/**
  * @brief Retrieves, but does not remove, the first element of this linked-list.
  * @param list Pointer to linked-list.
  * @return the first element of this linked-list, or null if this list is empty.
@@ -176,6 +185,12 @@ void lk_remove(struct LkList *list);
  */
 void lk_remove_last(struct LkList *list);
 
-static void lk_rmnode(struct LkList *list, struct LkNode *ptr);
+/**
+ * @brief Reset current iterator.
+ * @param list Pointer to linked-list.
+ */
+void lk_reset_iterator(struct LkList *list);
+
+static void __lk_rmnode(struct LkList *list, struct LkNode *ptr);
 
 #endif

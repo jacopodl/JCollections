@@ -55,3 +55,7 @@ inline void *hset_iterator(struct HSet *hset) {
         return obj;
     return NULL;
 }
+
+inline void hset_reset_iterator(struct HSet *hset) {
+    ht_reset_iterator(&hset->table);
+}

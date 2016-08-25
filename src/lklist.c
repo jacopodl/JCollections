@@ -33,7 +33,7 @@ bool lk_contains(struct LkList *list, void *value) {
 bool lk_remove_at_index(struct LkList *list, jcsize index) {
     struct LkNode *cursor;
     jcsize i = 0;
-    if (index>=list->count) {
+    if (index >= list->count) {
         errno = EINVAL;
         return false;
     }
@@ -41,7 +41,7 @@ bool lk_remove_at_index(struct LkList *list, jcsize index) {
     while (cursor != NULL) {
         if (i == index) {
             list->free(cursor->value);
-            lk_rmnode(list, cursor);
+            __lk_rmnode(list, cursor);
             break;
         }
         cursor = cursor->next;
@@ -55,7 +55,7 @@ bool lk_remove_object(struct LkList *list, void *value) {
     for (cursor = list->list; cursor != NULL; cursor = cursor->next)
         if (list->equals_to(value, cursor->value)) {
             list->free(cursor->value);
-            lk_rmnode(list, cursor);
+            __lk_rmnode(list, cursor);
             return true;
         }
     return false;
@@ -66,14 +66,15 @@ JCErr lk_push(struct LkList *list, void *value) {
     if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
         return JCERR_ENOMEM;
     node->next = list->list;
-    node->prev=NULL;
+    node->prev = NULL;
     node->value = value;
-    if(node->next!=NULL)
-        node->next->prev=node;
+    if (node->next != NULL)
+        node->next->prev = node;
     if (list->tail == NULL)
         list->tail = node;
     list->list = node;
     list->count++;
+    lk_reset_iterator(list);
     return JCERR_SUCCESS;
 }
 
@@ -86,21 +87,21 @@ JCErr lk_push_last(struct LkList *list, void *value) {
         node->next = list->list;
         node->prev = NULL;
         list->list = node;
-    }
-    else {
+    } else {
         node->next = NULL;
         node->prev = list->tail;
     }
-    if(node->prev!=NULL)
-        node->prev->next=node;
+    if (node->prev != NULL)
+        node->prev->next = node;
     list->tail = node;
     list->count++;
+    lk_reset_iterator(list);
     return JCERR_SUCCESS;
 }
 
 void lk_cleanup(struct LkList *list, bool freemem) {
     lk_clear(list);
-    if(freemem)
+    if (freemem)
         free(list);
 }
 
@@ -112,6 +113,7 @@ void lk_clear(struct LkList *list) {
     list->list = NULL;
     list->tail = NULL;
     list->count = 0;
+    lk_reset_iterator(list);
 }
 
 void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj)) {
@@ -120,6 +122,17 @@ void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void
     list->count = 0;
     list->equals_to = equals_to;
     list->free = free;
+    lk_reset_iterator(list);
+}
+
+void *lk_iterator(struct LkList *list) {
+    if (list->iter_ptr == NULL)
+        list->iter_ptr = list->list;
+    else
+        list->iter_ptr = list->iter_ptr->next;
+    if (list->iter_ptr != NULL)
+        return list->iter_ptr->value;
+    return NULL;
 }
 
 inline void *lk_peek(struct LkList *list) {
@@ -138,7 +151,7 @@ void *lk_pop(struct LkList *list) {
     void *value = NULL;
     if (list->list != NULL) {
         value = list->list->value;
-        lk_rmnode(list, list->list);
+        __lk_rmnode(list, list->list);
     }
     return value;
 }
@@ -147,7 +160,7 @@ void *lk_pop_last(struct LkList *list) {
     void *value = NULL;
     if (list->tail != NULL) {
         value = list->tail->value;
-        lk_rmnode(list, list->tail);
+        __lk_rmnode(list, list->tail);
     }
     return value;
 }
@@ -155,18 +168,22 @@ void *lk_pop_last(struct LkList *list) {
 void lk_remove(struct LkList *list) {
     if (list->list != NULL) {
         list->free(list->list->value);
-        lk_rmnode(list, list->list);
+        __lk_rmnode(list, list->list);
     }
 }
 
 void lk_remove_last(struct LkList *list) {
     if (list->tail != NULL) {
         list->free(list->tail->value);
-        lk_rmnode(list, list->tail);
+        __lk_rmnode(list, list->tail);
     }
 }
 
-static void lk_rmnode(struct LkList *list, struct LkNode *ptr) {
+inline void lk_reset_iterator(struct LkList *list) {
+    list->iter_ptr = NULL;
+}
+
+static void __lk_rmnode(struct LkList *list, struct LkNode *ptr) {
     struct LkNode *prev = ptr->prev;
     struct LkNode *next = ptr->next;
     if (prev == NULL) {
@@ -175,8 +192,7 @@ static void lk_rmnode(struct LkList *list, struct LkNode *ptr) {
             next->prev = NULL;
         else
             list->tail = NULL;
-    }
-    else {
+    } else {
         prev->next = next;
         if (next != NULL)
             next->prev = prev;
@@ -185,4 +201,5 @@ static void lk_rmnode(struct LkList *list, struct LkNode *ptr) {
     }
     free(ptr);
     list->count--;
+    lk_reset_iterator(list);
 }

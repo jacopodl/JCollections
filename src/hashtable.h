@@ -176,6 +176,10 @@ void *ht_get(struct HTable *htable, void *key);
 void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash)(void *key),
              bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value));
 
-static void __ht_reset_iterator(struct HTable *htable);
+/**
+ * @brief Reset current iterator.
+ * @param htable Pointer to hashtable.
+ */
+void ht_reset_iterator(struct HTable *htable);
 
 #endif

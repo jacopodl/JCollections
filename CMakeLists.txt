@@ -3,7 +3,7 @@ project(LibJCollections)
 include(CTest)
 
 set (VERSION_MAJOR 1)
-set (VERSION_MINOR 1)
+set (VERSION_MINOR 2)
 set (VERSION_PATCH 0)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --pedantic --std=c99")
