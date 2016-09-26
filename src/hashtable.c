@@ -26,25 +26,19 @@ bool ht_contains(struct HTable *htable, void *key) {
     return __ht_search_node(htable, key) != NULL;
 }
 
-bool ht_remove(struct HTable *htable, void *key) {
-    struct HashNode *cursor;
-    struct HashNode *prev;
-    jcsize index;
-
-    if (htable->htable != NULL) {
-        index = htable->hash(key) % htable->size;
-        for (prev = NULL, cursor = htable->htable[index]; cursor != NULL; prev = cursor, cursor = prev->next) {
-            if (htable->equals_to(cursor->key, key)) {
-                if (prev == NULL)
-                    htable->htable[index] = cursor->next;
-                else
-                    prev->next = cursor->next;
-                htable->free(cursor->key, cursor->value);
-                free(cursor);
-                htable->items--;
-                ht_reset_iterator(htable);
-                return true;
-            }
+bool ht_iterate(struct HTIterator *iter, void **key, void **value) {
+    for (; iter->iter_idx < iter->htable->size; iter->iter_idx++) {
+        if (iter->cursor == NULL)
+            iter->cursor = iter->htable->htable[iter->iter_idx];
+        if (iter->cursor != NULL) {
+            if (key != NULL)
+                (*key) = iter->cursor->key;
+            if (value != NULL)
+                (*value) = iter->cursor->value;
+            iter->cursor = iter->cursor->next;
+            if (iter->cursor == NULL)
+                iter->iter_idx++;
+            return true;
         }
     }
     return false;
@@ -62,6 +56,14 @@ static struct HashNode *__ht_search_node(struct HTable *htable, void *key) {
     return NULL;
 }
 
+struct HTIterator ht_get_iterator(struct HTable *htable) {
+    struct HTIterator iter;
+    iter.htable = htable;
+    iter.cursor = NULL;
+    iter.iter_idx = 0;
+    return iter;
+}
+
 JCErr ht_put(struct HTable *htable, void *key, void *value) {
     return __ht_insert(htable, key, value, false);
 }
@@ -71,30 +73,34 @@ JCErr ht_set(struct HTable *htable, void *key, void *value) {
 }
 
 JCErr __ht_insert(struct HTable *htable, void *key, void *value, bool override) {
+    struct HashNode *cursor;
+
     if (value == NULL || key == NULL)
         return JCERR_NULLVAL;
+
     if (htable->htable == NULL) {
         if ((htable->htable = (struct HashNode **) calloc(htable->size, sizeof(struct HashNode *))) == NULL)
             return JCERR_ENOMEM;
     }
+
     if (((float) htable->items + 1) / htable->size > htable->loadFactor) {
         JCErr err;
         if ((err = __ht_rehash(htable)) != JCERR_SUCCESS)
             return err;
     }
+
     jcsize index = htable->hash(key) % htable->size;
-    struct HashNode *cursor;
-    for (cursor = htable->htable[index]; cursor != NULL; cursor = cursor->next) {
-        if (htable->equals_to(cursor->key, key)) {
-            if (override) {
+    if ((cursor = __ht_search_node(htable, key)) != NULL) {
+        if (override) {
+            if (htable->free != NULL)
                 htable->free(cursor->key, cursor->value);
-                cursor->key = key;
-                cursor->value = value;
-                return JCERR_SUCCESS;
-            } else
-                return JCERR_KEYEXIST;
-        }
+            cursor->key = key;
+            cursor->value = value;
+            return JCERR_SUCCESS;
+        } else
+            return JCERR_KEYEXIST;
     }
+
     if ((cursor = (struct HashNode *) malloc(sizeof(struct HashNode))) == NULL)
         return JCERR_ENOMEM;
     cursor->value = value;
@@ -102,7 +108,6 @@ JCErr __ht_insert(struct HTable *htable, void *key, void *value, bool override) 
     cursor->next = htable->htable[index];
     htable->htable[index] = cursor;
     htable->items++;
-    ht_reset_iterator(htable);
     return JCERR_SUCCESS;
 }
 
@@ -153,42 +158,6 @@ void ht_clear(struct HTable *htable, bool size_reset) {
     __ht_clear_table(htable, !size_reset ? __HT_INTERNAL_CLEARMODE_CLEAR : __HT_INTERNAL_CLEARMODE_RESET);
 }
 
-static void __ht_clear_table(struct HTable *htable, int mode) {
-    struct HashNode *cursor;
-    struct HashNode *tmp;
-
-    if (htable->htable == NULL)
-        return;
-
-    for (jcsize i = 0; i < htable->size; i++) {
-        for (cursor = htable->htable[i]; cursor != NULL; cursor = tmp) {
-            tmp = cursor->next;
-            htable->free(cursor->key, cursor->value);
-            free(cursor);
-        }
-        htable->htable[i] = NULL;
-    }
-    htable->items = 0;
-    ht_reset_iterator(htable);
-    switch (mode) {
-        case __HT_INTERNAL_CLEARMODE_CLEAR:
-            break;
-        case __HT_INTERNAL_CLEARMODE_RESET:
-            htable->size = htable->bsize;
-            htable->rhcount = 1;
-            free(htable->htable);
-            htable->htable = NULL;
-            break;
-        case __HT_INTERNAL_CLEARMODE_DESTROY:
-            free(htable->htable);
-            memset(htable, 0x00, sizeof(struct HTable));
-            htable->htable = NULL;
-            break;
-        default:
-            break;
-    }
-}
-
 void *ht_get(struct HTable *htable, void *key) {
     struct HashNode *node;
     if ((node = __ht_search_node(htable, key)) != NULL)
@@ -207,30 +176,70 @@ void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash
     htable->hash = hash;
     htable->equals_to = equals_to;
     htable->free = free;
-    ht_reset_iterator(htable);
 }
 
-bool ht_iterator(struct HTable *htable, void **key, void **value) {
-    for (; htable->iter_idx < htable->size; htable->iter_idx++) {
-        if (htable->iter_ptr == NULL)
-            htable->iter_ptr = htable->htable[htable->iter_idx];
-        if (htable->iter_ptr != NULL) {
-            if (key != NULL)
-                (*key) = htable->iter_ptr->key;
-            if (value != NULL)
-                (*value) = htable->iter_ptr->value;
-            htable->iter_ptr = htable->iter_ptr->next;
-            if (htable->iter_ptr == NULL)
-                htable->iter_idx++;
-            return true;
+void *ht_remove(struct HTable *htable, void *key) {
+    struct HashNode *cursor;
+    struct HashNode *prev;
+    void *value = NULL;
+    jcsize index;
+
+    if (htable->htable != NULL) {
+        index = htable->hash(key) % htable->size;
+        for (prev = NULL, cursor = htable->htable[index]; cursor != NULL; prev = cursor, cursor = prev->next) {
+            if (htable->equals_to(cursor->key, key)) {
+                value = cursor->value;
+                if (htable->free != NULL)
+                    htable->free(cursor->key, NULL);
+                if (prev == NULL)
+                    htable->htable[index] = cursor->next;
+                else
+                    prev->next = cursor->next;
+                free(cursor);
+                htable->items--;
+                break;
+            }
         }
     }
-    ht_reset_iterator(htable);
-    return false;
+    return value;
 }
 
-void ht_reset_iterator(struct HTable *htable) {
-    htable->iter_idx = 0;
-    htable->iter_ptr = NULL;
+void ht_reset_iterator(struct HTIterator *iter) {
+    iter->cursor = NULL;
+    iter->iter_idx = 0;
+}
+
+static void __ht_clear_table(struct HTable *htable, int mode) {
+    struct HashNode *cursor;
+    struct HashNode *tmp;
+
+    if (htable->htable == NULL)
+        return;
+
+    for (jcsize i = 0; i < htable->size; i++) {
+        for (cursor = htable->htable[i]; cursor != NULL; cursor = tmp) {
+            tmp = cursor->next;
+            if (htable->free != NULL)
+                htable->free(cursor->key, cursor->value);
+            free(cursor);
+        }
+        htable->htable[i] = NULL;
+    }
+    htable->items = 0;
+    switch (mode) {
+        case __HT_INTERNAL_CLEARMODE_RESET:
+            htable->size = htable->bsize;
+            htable->rhcount = 1;
+            free(htable->htable);
+            htable->htable = NULL;
+            break;
+        case __HT_INTERNAL_CLEARMODE_DESTROY:
+            free(htable->htable);
+            memset(htable, 0x00, sizeof(struct HTable));
+            htable->htable = NULL;
+            break;
+        default:    // __HT_INTERNAL_CLEARMODE_CLEAR
+            break;
+    }
 }
 

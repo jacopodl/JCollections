@@ -22,42 +22,11 @@
 #include "jcdatatype.h"
 #include "lklist.h"
 
-bool lk_contains(struct LkList *list, void *value) {
+bool lk_contains(struct LkList *list, void *value, bool(*equals_to)(void *obj1, void *obj2)) {
     struct LkNode *cursor;
     for (cursor = list->list; cursor != NULL; cursor = cursor->next)
-        if (list->equals_to(value, cursor->value))
+        if (equals_to(value, cursor->value))
             return true;
-    return false;
-}
-
-bool lk_remove_at_index(struct LkList *list, jcsize index) {
-    struct LkNode *cursor;
-    jcsize i = 0;
-    if (index >= list->count) {
-        errno = EINVAL;
-        return false;
-    }
-    cursor = list->list;
-    while (cursor != NULL) {
-        if (i == index) {
-            list->free(cursor->value);
-            __lk_rmnode(list, cursor);
-            break;
-        }
-        cursor = cursor->next;
-        i++;
-    }
-    return true;
-}
-
-bool lk_remove_object(struct LkList *list, void *value) {
-    struct LkNode *cursor;
-    for (cursor = list->list; cursor != NULL; cursor = cursor->next)
-        if (list->equals_to(value, cursor->value)) {
-            list->free(cursor->value);
-            __lk_rmnode(list, cursor);
-            return true;
-        }
     return false;
 }
 
@@ -65,16 +34,14 @@ JCErr lk_push(struct LkList *list, void *value) {
     struct LkNode *node;
     if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
         return JCERR_ENOMEM;
-    node->next = list->list;
-    node->prev = NULL;
     node->value = value;
-    if (node->next != NULL)
+    node->prev = NULL;
+    if ((node->next = list->list) != NULL)
         node->next->prev = node;
     if (list->tail == NULL)
         list->tail = node;
     list->list = node;
     list->count++;
-    lk_reset_iterator(list);
     return JCERR_SUCCESS;
 }
 
@@ -83,20 +50,22 @@ JCErr lk_push_last(struct LkList *list, void *value) {
     if ((node = (struct LkNode *) malloc(sizeof(struct LkNode))) == NULL)
         return JCERR_ENOMEM;
     node->value = value;
-    if (list->tail == NULL) {
-        node->next = list->list;
-        node->prev = NULL;
+    node->next = NULL;
+    if ((node->prev = list->tail) == NULL)
         list->list = node;
-    } else {
-        node->next = NULL;
-        node->prev = list->tail;
-    }
     if (node->prev != NULL)
         node->prev->next = node;
     list->tail = node;
     list->count++;
-    lk_reset_iterator(list);
     return JCERR_SUCCESS;
+}
+
+struct LkIterator lk_get_iterator(struct LkList *list) {
+    struct LkIterator iter;
+    iter.lklist = list;
+    iter.cursor = NULL;
+    iter.start = true;
+    return iter;
 }
 
 void lk_cleanup(struct LkList *list, bool freemem) {
@@ -109,30 +78,37 @@ void lk_clear(struct LkList *list) {
     struct LkNode *cursor;
     struct LkNode *tmp;
     for (cursor = list->list; cursor != NULL; tmp = cursor->next, free(cursor), cursor = tmp)
-        list->free(cursor->value);
+        if (list->free != NULL)
+            list->free(cursor->value);
     list->list = NULL;
     list->tail = NULL;
     list->count = 0;
-    lk_reset_iterator(list);
 }
 
-void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj)) {
+void lk_init(struct LkList *list, void(*free)(void *obj)) {
     list->list = NULL;
     list->tail = NULL;
     list->count = 0;
-    list->equals_to = equals_to;
     list->free = free;
-    lk_reset_iterator(list);
 }
 
-void *lk_iterator(struct LkList *list) {
-    if (list->iter_ptr == NULL)
-        list->iter_ptr = list->list;
+void *lk_iterate(struct LkIterator *iter) {
+    if (iter->cursor == NULL && iter->start)
+        iter->cursor = iter->lklist->list;
     else
-        list->iter_ptr = list->iter_ptr->next;
-    if (list->iter_ptr != NULL)
-        return list->iter_ptr->value;
+        iter->cursor = iter->cursor->next;
+    if (iter->cursor != NULL)
+        return iter->cursor->value;
     return NULL;
+}
+
+void lk_iter_remove(struct LkIterator *iter) {
+    struct LkNode *next;
+    next = iter->cursor->prev;
+    if (iter->lklist->free != NULL)
+        iter->lklist->free(iter->cursor->value);
+    __lk_rmnode(iter->lklist, iter->cursor);
+    iter->cursor = next;
 }
 
 inline void *lk_peek(struct LkList *list) {
@@ -165,22 +141,43 @@ void *lk_pop_last(struct LkList *list) {
     return value;
 }
 
-void lk_remove(struct LkList *list) {
-    if (list->list != NULL) {
-        list->free(list->list->value);
-        __lk_rmnode(list, list->list);
+void *lk_remove_at_index(struct LkList *list, jcsize index) {
+    struct LkNode *cursor;
+    void *value = NULL;
+    jcsize i = 0;
+
+    if (index >= list->count) {
+        errno = EINVAL;
+        return NULL;
     }
+    cursor = list->list;
+    while (cursor != NULL) {
+        if (i == index) {
+            value = cursor->value;
+            __lk_rmnode(list, cursor);
+            break;
+        }
+        cursor = cursor->next;
+        i++;
+    }
+    return value;
 }
 
-void lk_remove_last(struct LkList *list) {
-    if (list->tail != NULL) {
-        list->free(list->tail->value);
-        __lk_rmnode(list, list->tail);
-    }
+void *lk_remove_object(struct LkList *list, void *value, bool(*equals_to)(void *obj1, void *obj2)) {
+    struct LkNode *cursor;
+    void *retv = NULL;
+    for (cursor = list->list; cursor != NULL; cursor = cursor->next)
+        if (equals_to(value, cursor->value)) {
+            retv = cursor->value;
+            __lk_rmnode(list, cursor);
+            break;
+        }
+    return retv;
 }
 
-inline void lk_reset_iterator(struct LkList *list) {
-    list->iter_ptr = NULL;
+inline void lk_reset_iterator(struct LkIterator *iter) {
+    iter->cursor = NULL;
+    iter->start = true;
 }
 
 static void __lk_rmnode(struct LkList *list, struct LkNode *ptr) {
@@ -201,5 +198,4 @@ static void __lk_rmnode(struct LkList *list, struct LkNode *ptr) {
     }
     free(ptr);
     list->count--;
-    lk_reset_iterator(list);
 }

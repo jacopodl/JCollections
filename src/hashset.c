@@ -26,8 +26,10 @@ inline bool hset_contains(struct HSet *hset, void *obj) {
     return ht_contains(&hset->table, obj);
 }
 
-inline bool hset_remove(struct HSet *hset, void *obj) {
-    return ht_remove(&hset->table, obj);
+inline struct HSIterator hset_get_iterator(struct HSet *hset) {
+    struct HSIterator iter;
+    iter.iter = ht_get_iterator(&hset->table);
+    return iter;
 }
 
 inline JCErr hset_add(struct HSet *hset, void *obj) {
@@ -49,13 +51,17 @@ inline void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj),
     ht_init(&hset->table, size, HT_DEFLOADF, hash, equals_to, (void (*)(void *, void *)) free);
 }
 
-inline void *hset_iterator(struct HSet *hset) {
+inline void *hset_iterate(struct HSIterator *iter) {
     void *obj;
-    if (ht_iterator(&hset->table, &obj, NULL))
+    if (ht_iterate(&iter->iter, &obj, NULL))
         return obj;
     return NULL;
 }
 
-inline void hset_reset_iterator(struct HSet *hset) {
-    ht_reset_iterator(&hset->table);
+inline void *hset_remove(struct HSet *hset, void *obj) {
+    return ht_remove(&hset->table, obj);
+}
+
+inline void hset_reset_iterator(struct HSIterator *iter) {
+    ht_reset_iterator(&iter->iter);
 }

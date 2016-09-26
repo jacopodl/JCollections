@@ -31,6 +31,7 @@
 #include "jcdatatype.h"
 #include "utils.h"
 #include "lklist.h"
+#include "vrtlist.h"
 #include "queue.h"
 #include "stack.h"
 #include "hashtable.h"

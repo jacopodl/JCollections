@@ -29,7 +29,9 @@
 #include "jcdatatype.h"
 
 #define HT_DEFLOADF 0.75
-#define STATIC_HASHTABLE_INITIALIZER(size, hash, equals_to, free)    {NULL,NULL,size,size,0,0,1,HT_DEFLOADF,hash,equals_to,free}
+#define STATIC_HASHTABLE_INITIALIZER(hash, equals_to)               {NULL, 11, 11, 0, 0, HT_DEFLOADF, hash, equals_to, NULL}
+#define STATIC_HASHTABLE_INITIALIZER3(size, hash, equals_to)        {NULL, 11, 11, 0, 0, HT_DEFLOADF, hash, equals_to, NULL}
+#define STATIC_HASHTABLE_INITIALIZER4(size, hash, equals_to, free)  {NULL, 11, 11, 0, 0, HT_DEFLOADF, hash, equals_to, free}
 
 #define __HT_INTERNAL_CLEARMODE_CLEAR     0x00
 #define __HT_INTERNAL_CLEARMODE_RESET     0x01
@@ -77,11 +79,9 @@ struct HashNode {
  */
 struct HTable {
     struct HashNode **htable;
-    struct HashNode *iter_ptr;
     jcsize size;
     jcsize bsize;
     jcsize items;
-    jcsize iter_idx;
     unsigned int rhcount;
     float loadFactor;
 
@@ -90,6 +90,12 @@ struct HTable {
     bool (*equals_to)(void *key1, void *key2);
 
     void (*free)(void *key, void *value);
+};
+
+struct HTIterator {
+    struct HTable *htable;
+    struct HashNode *cursor;
+    jcsize iter_idx;
 };
 
 /**
@@ -102,23 +108,21 @@ bool ht_contains(struct HTable *htable, void *key);
 
 /**
  * @brief Returns an iterator over the elements in this hashtable.
- * @param htable Pointer to hashtable.
- * @param __OUT__key Key Value associated to value.
+ * @param iter Pointer to hashtable iterator.
+ * @param __OUT__key Key associated to value.
  * @param __OUT__value Value associated to key.
  * @return Returns true if the iteration has more elements.
- * @warning The following operations resets the iterator: add, remove, clear.
  */
-bool ht_iterator(struct HTable *htable, void **key, void **value);
-
-/**
- * @brief Remove an element from hashtable.
- * @param htable Pointer to hashtable.
- * @param value The value to be removed from hashtable.
- * @return If the value does not exist false is returned, otherwise true is returned.
- */
-bool ht_remove(struct HTable *htable, void *key);
+bool ht_iterate(struct HTIterator *iter, void **key, void **value);
 
 static struct HashNode *__ht_search_node(struct HTable *htable, void *key);
+
+/**
+ * @brief Obtains iterator for hashtable.
+ * @param htable Pointer to hashtable.
+ * @return HTIterator object.
+ */
+struct HTIterator ht_get_iterator(struct HTable *htable);
 
 /**
  * @brief Inserts an element into hashtable.
@@ -155,8 +159,6 @@ void ht_cleanup(struct HTable *htable, bool freemem);
  */
 void ht_clear(struct HTable *htable, bool size_reset);
 
-static void __ht_clear_table(struct HTable *htable, int mode);
-
 /**
  * @brief Returns the value to which the specified key is mapped.
  * @param htable Pointer to hashtable.
@@ -177,9 +179,19 @@ void ht_init(struct HTable *htable, jcsize size, float loadFactor, jcsize (*hash
              bool (*equals_to)(void *key1, void *key2), void (*free)(void *key, void *value));
 
 /**
- * @brief Reset current iterator.
+ * @brief Remove an element from hashtable.
  * @param htable Pointer to hashtable.
+ * @param key The key to be removed from hashtable.
+ * @return pointer to value if this hashtable contains the specified element, NULL otherwise.
  */
-void ht_reset_iterator(struct HTable *htable);
+void *ht_remove(struct HTable *htable, void *key);
+
+/**
+ * @brief Reset current iterator.
+ * @param iter Pointer to hashtable iterator.
+ */
+void ht_reset_iterator(struct HTIterator *iter);
+
+static void __ht_clear_table(struct HTable *htable, int mode);
 
 #endif

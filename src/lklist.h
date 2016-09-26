@@ -27,7 +27,8 @@
 #include <stdbool.h>
 #include "jcdatatype.h"
 
-#define STATIC_LKLIST_INITIALIZER(equals_to, free)   {NULL,NULL,NULL,0,equals_to,free}
+#define STATIC_LKLIST_INITIALIZER           {NULL, NULL, NULL, 0, NULL}
+#define STATIC_LKLIST_INITIALIZER1(free)    {NULL, NULL, NULL, 0, free}
 
 /**
  * @brief Obtains number of elements in this linked-list.
@@ -66,37 +67,25 @@ struct LkNode {
 struct LkList {
     struct LkNode *list;
     struct LkNode *tail;
-    struct LkNode *iter_ptr;
     jcsize count;
 
-    bool (*equals_to)(void *obj1, void *obj2);
-
     void (*free)(void *obj);
+};
+
+struct LkIterator {
+    struct LkList *lklist;
+    struct LkNode *cursor;
+    bool start;
 };
 
 /**
  * @brief Returns true if this linked-list contains the specified element.
  * @param list Pointer to linked-list.
  * @param value Element whose presence in this linked-list is to be tested.
+ * @param equals_to Pointer to comparison function.
  * @return true if this list contains the specified element, false otherwise.
  */
-bool lk_contains(struct LkList *list, void *value);
-
-/**
- * @brief Removes the element at the specified position in this linked-list.
- * @param list Pointer to linked-list.
- * @param value The value to be removed from this linked-list.
- * @return true if this list contains the specified element, false otherwise.
- */
-bool lk_remove_at_index(struct LkList *list, jcsize index);
-
-/**
- * @brief Remove an element in this linked-list.
- * @param list Pointer to linkedlist.
- * @param value The value to be removed from this linked-list.
- * @return true if this list contains the specified element, false otherwise.
- */
-bool lk_remove_object(struct LkList *list, void *value);
+bool lk_contains(struct LkList *list, void *value, bool(*equals_to)(void *obj1, void *obj2));
 
 /**
  * @brief Inserts the specified element at the beginning of this linked-list.
@@ -117,6 +106,13 @@ JCErr lk_push(struct LkList *list, void *value);
 JCErr lk_push_last(struct LkList *list, void *value);
 
 /**
+ * @brief Obtains iterator for linked-list.
+ * @param list Pointer to linked-list.
+ * @return LkIterator object.
+ */
+struct LkIterator lk_get_iterator(struct LkList *list);
+
+/**
  * @brief Dismiss linked-list and releases all resources.
  * @param list Pointer to linked-list.
  * @param freemem Release memory?
@@ -135,15 +131,20 @@ void lk_clear(struct LkList *list);
  * @param equals_to Pointer to the function called for compare two objects.
  * @param free Pointer to the function called to free memory.
  */
-void lk_init(struct LkList *list, bool(*equals_to)(void *obj1, void *obj2), void(*free)(void *obj));
+void lk_init(struct LkList *list, void(*free)(void *obj));
 
 /**
  * @brief Returns an iterator over the elements in this linked list.
- * @param list Pointer to linked list.
- * @return Returns the next element in the linkedl ist if present, otherwise NULL is returned.
- * @warning The following operations resets the iterator: push, pop, clear.
+ * @param iter Pointer to list iterator.
+ * @return Returns the next element in the linkedlist if present, otherwise NULL is returned.
  */
-void *lk_iterator(struct LkList *list);
+void *lk_iterate(struct LkIterator *iter);
+
+/**
+ * @brief Removes(free(value)) the last element returned by this iterator.
+ * @param iter Pointer to linked-list iterator.
+ */
+void lk_iter_remove(struct LkIterator *iter);
 
 /**
  * @brief Retrieves, but does not remove, the first element of this linked-list.
@@ -174,22 +175,27 @@ void *lk_pop(struct LkList *list);
 void *lk_pop_last(struct LkList *list);
 
 /**
- * @brief Removes the first element of this linked-list.
+ * @brief Remove the element at the specified position in this linked-list.
  * @param list Pointer to linked-list.
+ * @param value The value to be removed from this linked-list.
+ * @return pointer to value if this list contains element at the indicated position, NULL otherwise.
  */
-void lk_remove(struct LkList *list);
+void *lk_remove_at_index(struct LkList *list, jcsize index);
 
 /**
- * @brief Removes the last element of this linked-list.
- * @param list Pointer to linked-list.
+ * @brief Remove an element in this linked-list.
+ * @param list Pointer to linkedlist.
+ * @param value The value to be removed from this linked-list.
+ * @param equals_to Pointer to comparison function.
+ * @return pointer to value if this list contains the specified element, NULL otherwise.
  */
-void lk_remove_last(struct LkList *list);
+void *lk_remove_object(struct LkList *list, void *value, bool(*equals_to)(void *obj1, void *obj2));
 
 /**
- * @brief Reset current iterator.
- * @param list Pointer to linked-list.
+ * @brief Reset iterator.
+ * @param iter Pointer to list iterator.
  */
-void lk_reset_iterator(struct LkList *list);
+void lk_reset_iterator(struct LkIterator *iter);
 
 static void __lk_rmnode(struct LkList *list, struct LkNode *ptr);
 

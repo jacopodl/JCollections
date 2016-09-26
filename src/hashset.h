@@ -29,7 +29,10 @@
 #include "jcdatatype.h"
 #include "hashtable.h"
 
-#define STATIC_HASHSET_INITIALIZER
+#define STATIC_HASHSET_INITIALIZER(hash, equals_to)                 {STATIC_HASHTABLE_INITIALIZER(hash, equals_to)}
+#define STATIC_HASHSET_INITIALIZER3(size, hash, equals_to)          {STATIC_HASHTABLE_INITIALIZER3(size, hash, equals_to)}
+#define STATIC_HASHSET_INITIALIZER4(size, hash, equals_to, free)    {STATIC_HASHTABLE_INITIALIZER4(size, hash, equals_to, free)}
+
 
 /**
  * @brief Obtains number of elements in the hashset.
@@ -60,6 +63,10 @@ struct HSet {
     struct HTable table;
 };
 
+struct HSIterator {
+    struct HTIterator iter;
+};
+
 /**
  * @brief Returns true if this hashset contains the specified element.
  * @param hset Pointer to hashset.
@@ -69,12 +76,11 @@ struct HSet {
 bool hset_contains(struct HSet *hset, void *obj);
 
 /**
- * @brief Remove an element from hashset.
+ * @brief Obtains iterator for hashset.
  * @param hset Pointer to hashset.
- * @param value The value to be removed from hashset.
- * @return If the value does not exist false is returned, otherwise true is returned.
+ * @return HSIterator object.
  */
-bool hset_remove(struct HSet *hset, void *obj);
+struct HSIterator hset_get_iterator(struct HSet *hset);
 
 /**
  * @brief Inserts an element into hashset.
@@ -108,18 +114,26 @@ void hset_clear(struct HSet *hset);
  */
 void hset_init(struct HSet *hset, jcsize size, jcsize (*hash)(void *obj), bool (*equals_to)(void *obj1, void *obj2),
                void (*free)(void *obj));
+
 /**
  * @brief Returns an iterator over the elements in this set.
- * @param hset Pointer to hashset.
+ * @param iter Pointer to hashset iterator.
  * @return Returns the next element in the hashset if present, otherwise NULL is returned.
- * @warning The following operations resets the iterator: add, remove, clear.
  */
-void *hset_iterator(struct HSet *hset);
+void *hset_iterate(struct HSIterator *iter);
+
+/**
+ * @brief Remove an element from hashset.
+ * @param hset Pointer to hashset.
+ * @param obj The object to be removed from hashset.
+ * @return pointer to value if this hashset contains the specified element, NULL otherwise.
+ */
+void *hset_remove(struct HSet *hset, void *obj);
 
 /**
  * @brief Reset current iterator.
- * @param hset Pointer to hashset.
+ * @param iter Pointer to hashset iterator.
  */
-void hset_reset_iterator(struct HSet *hset);
+void hset_reset_iterator(struct HSIterator *iter);
 
 #endif

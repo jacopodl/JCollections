@@ -27,6 +27,9 @@
 #include "jcdatatype.h"
 #include "lklist.h"
 
+#define STATIC_STACK_INITIALIZER        {STATIC_LKLIST_INITIALIZER}
+#define STATIC_STACK_INITIALIZER1(free) {STATIC_LKLIST_INITIALIZER1(free)}
+
 /**
  * @brief Obtains number of elements in this stack.
  * @param sk Pointer to stack.

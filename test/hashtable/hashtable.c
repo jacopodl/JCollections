@@ -16,6 +16,10 @@ char *mkstr(char *str)
 int main(int argc, char **argv)
 {
     struct HTable table;
+    struct HTIterator iter;
+    char *key;
+    char *value;
+
     printf("ht_init\t[OK]\n");
     ht_init(&table, 5, HT_DEFLOADF, hash4str, eq4str, g2free);
     assert(HT_ISEMPTY((&table))==true);
@@ -34,7 +38,9 @@ int main(int argc, char **argv)
     ht_set(&table,mkstr("c8h16"),mkstr("ethylcyclohexane"));
     assert(strcmp(((char *)ht_get(&table,"c8h16")),"ethylcyclohexane")==0);
     assert(strcmp(((char *)ht_get(&table,"ch3")),"methyl")==0);
-    while(ht_iterator(&table,NULL,NULL));
+    iter = ht_get_iterator(&table);
+    while(ht_iterate(&iter,(void**)&key,(void**)&value))
+        printf("Key: %s - value: %s\n",key,value);
     ht_remove(&table,"ch3");
     assert(ht_get(&table,"ch3")==NULL);
     assert(HT_COUNT((&table))==5);
