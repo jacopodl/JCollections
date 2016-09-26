@@ -27,8 +27,8 @@
 #include <stdbool.h>
 #include "jcdatatype.h"
 
-#define STATIC_LKLIST_INITIALIZER           {NULL, NULL, NULL, 0, NULL}
-#define STATIC_LKLIST_INITIALIZER1(free)    {NULL, NULL, NULL, 0, free}
+#define STATIC_LKLIST_INITIALIZER           {NULL, NULL, 0, NULL}
+#define STATIC_LKLIST_INITIALIZER1(free)    {NULL, NULL, 0, free}
 
 /**
  * @brief Obtains number of elements in this linked-list.
