@@ -30,8 +30,8 @@
 
 #define HT_DEFLOADF 0.75
 #define STATIC_HASHTABLE_INITIALIZER(hash, equals_to)               {NULL, 11, 11, 0, 0, HT_DEFLOADF, hash, equals_to, NULL}
-#define STATIC_HASHTABLE_INITIALIZER3(size, hash, equals_to)        {NULL, 11, 11, 0, 0, HT_DEFLOADF, hash, equals_to, NULL}
-#define STATIC_HASHTABLE_INITIALIZER4(size, hash, equals_to, free)  {NULL, 11, 11, 0, 0, HT_DEFLOADF, hash, equals_to, free}
+#define STATIC_HASHTABLE_INITIALIZER3(size, hash, equals_to)        {NULL, size, size, 0, 0, HT_DEFLOADF, hash, equals_to, NULL}
+#define STATIC_HASHTABLE_INITIALIZER4(size, hash, equals_to, free)  {NULL, size, size, 0, 0, HT_DEFLOADF, hash, equals_to, free}
 
 #define __HT_INTERNAL_CLEARMODE_CLEAR     0x00
 #define __HT_INTERNAL_CLEARMODE_RESET     0x01
