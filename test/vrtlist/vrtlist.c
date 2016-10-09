@@ -28,9 +28,9 @@ int main(int argc, char **argv) {
 
     assert(VRTLIST_COUNT((&list)) == 3);
 
-    VRTLIST_FOREACH((&list), my_entry, cursor)printf("foreach: %d\n", cursor->num);
+    VRTLIST_FOREACH((&list), my_entry, elem)printf("foreach: %d\n", elem->num);
 
-    VRTLIST_FOREACH_REVERSE((&list), my_entry, cursor)printf("foreach_r: %d\n", cursor->num);
+    VRTLIST_FOREACH_REVERSE((&list), my_entry, entry)printf("foreach_r: %d\n", entry->num);
 
     struct my_entry *entry;
     VRTLIST_POP((&list), entry);

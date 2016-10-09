@@ -90,9 +90,9 @@
     } while(0)
 
 #define VRTLIST_FOREACH(list, etype, curname)       \
-    for(struct etype *next, *curname = list->head; (cursor != NULL) && (next = cursor->next, 1); cursor = next)
+    for(struct etype *next, *curname = list->head; (curname != NULL) && (next = curname->next, 1); curname = next)
 
 #define VRTLIST_FOREACH_REVERSE(list, etype, curname)       \
-    for(struct etype *prev, *curname = list->tail; (cursor != NULL) && (prev = cursor->prev, 1); cursor = prev)
+    for(struct etype *prev, *curname = list->tail; (curname != NULL) && (prev = curname->prev, 1); curname = prev)
 
 #endif //LIBJCOLLECTIONS_VRTLIST_H

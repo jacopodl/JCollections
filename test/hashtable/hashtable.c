@@ -24,6 +24,11 @@ int main(int argc, char **argv)
     ht_init(&table, 5, HT_DEFLOADF, hash4str, eq4str, g2free);
     assert(HT_ISEMPTY((&table))==true);
     assert(HT_SIZE((&table))==5);
+
+    iter = ht_get_iterator(&table);
+    while(ht_iterate(&iter,(void**)&key,(void**)&value))
+        printf("Key: %s - value: %s\n",key,value);
+
     ht_put(&table,mkstr("h20"),mkstr("water"));
     assert(ht_put(&table,mkstr("h20"),mkstr("err"))==JCERR_KEYEXIST);
     ht_put(&table,mkstr("ch4"),mkstr("methane"));
@@ -38,9 +43,11 @@ int main(int argc, char **argv)
     ht_set(&table,mkstr("c8h16"),mkstr("ethylcyclohexane"));
     assert(strcmp(((char *)ht_get(&table,"c8h16")),"ethylcyclohexane")==0);
     assert(strcmp(((char *)ht_get(&table,"ch3")),"methyl")==0);
+
     iter = ht_get_iterator(&table);
     while(ht_iterate(&iter,(void**)&key,(void**)&value))
         printf("Key: %s - value: %s\n",key,value);
+
     ht_remove(&table,"ch3");
     assert(ht_get(&table,"ch3")==NULL);
     assert(HT_COUNT((&table))==5);

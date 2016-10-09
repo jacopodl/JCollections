@@ -27,7 +27,7 @@ bool ht_contains(struct HTable *htable, void *key) {
 }
 
 bool ht_iterate(struct HTIterator *iter, void **key, void **value) {
-    for (; iter->iter_idx < iter->htable->size; iter->iter_idx++) {
+    for (; iter->iter_idx < iter->htable->size && iter->htable->htable != NULL; iter->iter_idx++) {
         if (iter->cursor == NULL)
             iter->cursor = iter->htable->htable[iter->iter_idx];
         if (iter->cursor != NULL) {
