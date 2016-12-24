@@ -3,6 +3,7 @@ project(LibJCollections)
 
 add_subdirectory(lklist)
 add_subdirectory(vrtlist)
+add_subdirectory(vrtqueue)
 add_subdirectory(stack)
 add_subdirectory(queue)
 add_subdirectory(hashtable)

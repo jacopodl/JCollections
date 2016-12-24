@@ -32,6 +32,7 @@
 #include "utils.h"
 #include "lklist.h"
 #include "vrtlist.h"
+#include "vrtqueue.h"
 #include "queue.h"
 #include "stack.h"
 #include "hashtable.h"
