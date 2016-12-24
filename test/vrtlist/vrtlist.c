@@ -43,6 +43,9 @@ int main(int argc, char **argv) {
     VRTLIST_REMOVE((&list), VRTLIST_PEEK((&list)));
     assert(VRTLIST_EMPTY((&list)) == true);
 
+    VRTLIST_POP((&list), entry);
+    VRTLIST_POP_LAST((&list), entry);
+
     VRTLIST_PUSH((&list), (&e1));
     VRTLIST_PUSH((&list), (&e2));
     VRTLIST_PUSH((&list), (&e3));

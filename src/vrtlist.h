@@ -74,19 +74,21 @@
 #define VRTLIST_EMPTY(list) (list->size == 0)
 #define VRTLIST_COUNT(list) (list->size)
 
-#define VRTLIST_REMOVE(list, elem)                      \
-    do {                                                \
-        if(elem->next != NULL) {                        \
-            if((elem->next->prev=elem->prev) == NULL)   \
-                list->head = elem->next;                \
-            else                                        \
-                elem->prev->next=elem->next;            \
-        } else {                                        \
-            if((list->tail = elem->prev) != NULL)       \
-                list->tail->next = NULL;                \
-            else                                        \
-                list->head = NULL;                      \
-        } list->size --;                                \
+#define VRTLIST_REMOVE(list, elem)                          \
+    do {                                                    \
+        if(elem!=NULL) {                                    \
+            if(elem->next != NULL) {                        \
+                if((elem->next->prev=elem->prev) == NULL)   \
+                    list->head = elem->next;                \
+                else                                        \
+                    elem->prev->next=elem->next;            \
+            } else {                                        \
+                if((list->tail = elem->prev) != NULL)       \
+                    list->tail->next = NULL;                \
+                else                                        \
+                    list->head = NULL;                      \
+            } list->size --;                                \
+        }                                                   \
     } while(0)
 
 #define VRTLIST_FOREACH(list, etype, curname)       \
