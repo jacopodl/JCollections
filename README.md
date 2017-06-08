@@ -22,6 +22,7 @@ JCollections uses cmake for automate the build process, you can build library in
     $ cmake CMakeLists.txt
     $ make
 If the build finishes without errors, the compiled library will be located in the bin directory and related headers file will be located in include directory.
+
 *Tests*
 -------
 If you want to test the newly compiled library, you can run the following command:
